@@ -4,5 +4,5 @@ __pycache__/model_training.cpython-39.pyc
 .DS_Store
 .idea/*
 .DS_Store
-backend.py
+../fastAPI/backend.py
 dados_1.CSV
