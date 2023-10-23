@@ -39,7 +39,7 @@ def fazer_previsao(h, r, lambdai, lambdaf, p, model):
     # Plotar o gráfico
     fig, ax = plt.subplots()
     ax.plot(x['lambda'], prediction, color='blue')
-    ax.set_title('Extra Tree Regressor Predict')
+    ax.set_title('Random Forest Regressor Predict')
     ax.set_xlabel('Wavelength [nm]')
     ax.set_ylabel('Scattering Cross Section x10^-14[a.u]')
     # Adicionar anotações ao gráfico
@@ -58,17 +58,35 @@ def fazer_previsao(h, r, lambdai, lambdaf, p, model):
 # Configurações do Streamlit
 st.set_page_config(page_title="Predict Scattering API", layout="wide")
 
-# Título da página e logo
-st.title("Predict Scattering API")
-
-# Redimensionar a imagem
-logo_image = Image.open("assets/images/logo_fotonica.jpeg")
-logo_image = logo_image.resize((200, 200))  # Ajuste as dimensões conforme necessário
-
 # Dividir a tela em duas colunas
 col1, col2 = st.columns(2)
 
-col1.image(logo_image)
+# Adicionar a linha horizontal na primeira coluna
+col1.markdown("<hr/>", unsafe_allow_html=True)
+
+# Redimensionar a imagem
+logo_image1 = Image.open("assets/images/logo_fotonica.jpeg")
+logo_image1 = logo_image1.resize((130, 130))  # Ajuste as dimensões conforme necessário
+
+# Criar subcolunas na primeira coluna
+subcol1, subcol2 = col1.columns(2)
+
+# Ajustar a largura da subcoluna para controlar o espaço entre a imagem e a linha horizontal
+subcol1.image(logo_image1, use_column_width=150)
+
+
+# Redimensionar a imagem
+logo_image2 = Image.open("assets/images/logo_ufc.jpeg")
+logo_image2 = logo_image2.resize((150, 150))  # Ajuste as dimensões conforme necessário
+
+# Ajustar a largura da subcoluna para controlar o espaço entre a imagem e a linha horizontal
+subcol2.image(logo_image2, use_column_width=150)
+
+# Adicionar a linha horizontal na primeira coluna
+col1.markdown("<hr/>", unsafe_allow_html=True)
+
+# Título da página e logo
+col1.title("Predict Scattering API")
 
 # Entradas do usuário
 h = col1.text_input("Enter the height of the cylindrical gold nanostructure in nm:", key="h")
