@@ -6,15 +6,24 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import pickle
 
-# Função para carregar o dicionário de modelos
-def load_models():
-    with open('trained_model.pkl', 'rb') as file:
-        model_dict = pickle.load(file)
-    return model_dict
+
+# Função para carregar o modelo com base no material selecionado
+def load_model(material):
+    if material == 'Gold':
+        model_file = 'OURO_model.pkl'
+    elif material == 'Copper':
+        model_file = 'COBRE_model.pkl'
+    elif material == 'Silver':
+        model_file = 'PRATA_model.pkl'
+
+    # Carregar o modelo correspondente
+    with open(model_file, 'rb') as file:
+        model = pickle.load(file)
+    return model
+
 
 # Função para realizar a previsão
 def fazer_previsao(h, r, lambdai, lambdaf, p, model):
-
     n_samples = int((lambdaf - lambdai) / p) + 1
 
     x1 = []
@@ -39,21 +48,25 @@ def fazer_previsao(h, r, lambdai, lambdaf, p, model):
     # Plotar o gráfico
     fig, ax = plt.subplots()
     ax.plot(x['lambda'], prediction, color='blue')
-    ax.set_title('Random Forest Regressor Predict')
+    ax.set_title(f'{material} Model Predict')
     ax.set_xlabel('Wavelength [nm]')
     ax.set_ylabel('Scattering Cross Section x10^-14[a.u]')
+
     # Adicionar anotações ao gráfico
     max_scattering = prediction.max()
     max_wavelength = x['lambda'][prediction.argmax()]
 
-    ax.annotate(f"Height: {h} nm", xy=(lambdai, max_scattering), xytext=(lambdai, max_scattering), color='red', fontsize=7)
-    ax.annotate(f"Radius: {r} nm", xy=(lambdai, max_scattering), xytext=(lambdai, max_scattering * 0.9), color='red', fontsize=7)
+    ax.annotate(f"Height: {h} nm", xy=(lambdai, max_scattering), xytext=(lambdai, max_scattering), color='red',
+                fontsize=7)
+    ax.annotate(f"Radius: {r} nm", xy=(lambdai, max_scattering), xytext=(lambdai, max_scattering * 0.9), color='red',
+                fontsize=7)
     ax.annotate(f"Wavelength peak: {max_wavelength} nm", xy=(max_wavelength, max_scattering),
                 xytext=(max_wavelength + 250, max_scattering), color='red', fontsize=7)
     ax.annotate(f"Scattering peak: {max_scattering:.4f} [a.u]", xy=(max_wavelength, max_scattering),
                 xytext=(max_wavelength + 250, max_scattering * 0.9), color='red', fontsize=7)
 
     return fig
+
 
 # Configurações do Streamlit
 st.set_page_config(page_title="Predict Scattering API", layout="wide")
@@ -74,7 +87,6 @@ subcol1, subcol2 = col1.columns(2)
 # Ajustar a largura da subcoluna para controlar o espaço entre a imagem e a linha horizontal
 subcol1.image(logo_image1, use_column_width=150)
 
-
 # Redimensionar a imagem
 logo_image2 = Image.open("assets/images/logo_ufc.jpeg")
 logo_image2 = logo_image2.resize((150, 150))  # Ajuste as dimensões conforme necessário
@@ -88,11 +100,14 @@ col1.markdown("<hr/>", unsafe_allow_html=True)
 # Título da página e logo
 col1.title("Predict Scattering API")
 
+# Seleção do material
+material = col1.selectbox("Select the material:", ["Gold", "Copper", "Silver"])
+
 # Entradas do usuário
-h = col1.text_input("Enter the height of the cylindrical gold nanostructure in nm:", key="h")
+h = col1.text_input("Enter the height of the cylindrical nanostructure in nm:", key="h")
 if h and h.isnumeric():
     h = float(h)
-r = col1.text_input("Enter the radius of the cylindrical gold nanostructure in nm:", key="r")
+r = col1.text_input("Enter the radius of the cylindrical nanostructure in nm:", key="r")
 if r and r.isnumeric():
     r = float(r)
 lambdai = col1.text_input("Enter the initial applied wavelength in nm:", key="lambdai")
@@ -116,9 +131,6 @@ if reset_button:
     lambdaf = None
     p = None
 
-# Carregar o dicionário de modelos
-model_dict = load_models()
-
 # Verificar se todas as caixas de entrada estão preenchidas e são números válidos
 if h is not None and r is not None and lambdai is not None and lambdai != '' and lambdaf is not None and lambdaf != '' and p is not None and p != '':
     # Converta lambdai, lambdaf e p para os tipos corretos
@@ -126,8 +138,8 @@ if h is not None and r is not None and lambdai is not None and lambdai != '' and
     lambdaf = float(lambdaf)
     p = int(p)
 
-    # Carregar o modelo a partir do dicionário
-    model = model_dict['trained_model']  # Corrigido para 'trained_model'
+    # Carregar o modelo com base no material selecionado
+    model = load_model(material)
 
     # Fazer a previsão
     fig = fazer_previsao(h, r, lambdai, lambdaf, p, model)
@@ -146,15 +158,13 @@ if h is not None and r is not None and lambdai is not None and lambdai != '' and
     # Centralizar a mensagem abaixo do gráfico
     col2.text("")  # Adicionar espaço em branco
     col2.markdown(
-        f'<p style="text-align: center;">The scattering peak value for this nanostructure is:</p>',
+        f'<p style="text-align: center;">The scattering peak value for the {material} nanostructure is:</p>',
         unsafe_allow_html=True
     )
     col2.markdown(
         f'<p style="text-align: center;">{valor_pico:.4f} [a.u]</p>',
         unsafe_allow_html=True
     )
-
-
 
 # # Entradas do usuário
 # h = col1.text_input("Enter the height of the cylindrical gold nanostructure in nm:", key="h")
