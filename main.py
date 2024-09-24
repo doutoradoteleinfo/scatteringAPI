@@ -80,7 +80,7 @@ subcol1, subcol2 = col1.columns(2)
 subcol1.image(logo_image1, use_column_width=150)
 
 # Redimensionar a imagem
-logo_image2 = Image.open("assets/images/logo_ifce.jp
+logo_image2 = Image.open("assets/images/logo_ifce.jpeg")
 logo_image2 = logo_image2.resize((150, 150))
 subcol2.image(logo_image2, use_column_width=150)
 
