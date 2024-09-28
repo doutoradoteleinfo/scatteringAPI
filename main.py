@@ -4,21 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import pickle
-import subprocess
-
-# Recuperar o token do secrets
-github_token = st.secrets["github"]["token"]
-
-# Comando para clonar o repositório
-clone_command = f"git clone https://{github_token}@github.com/doutoradoteleinfo/scatteringAPI.git"
-
-# Executar o comando de clonagem e capturar a saída
-result = subprocess.run(clone_command, capture_output=True, shell=True, text=True)
-
-# Exibir o resultado da tentativa de clonagem
-st.write("Clonagem do repositório:")
-st.write("Saída do comando:", result.stdout)
-st.write("Erros (se houver):", result.stderr)
 
 # Função para carregar o modelo com base no material selecionado
 def load_model(material):
