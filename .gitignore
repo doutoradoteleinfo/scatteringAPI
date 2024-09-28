@@ -6,3 +6,5 @@ __pycache__/model_training.cpython-39.pyc
 .DS_Store
 ../fastAPI/backend.py
 dados_1.CSV
+scatteringAPI
+
